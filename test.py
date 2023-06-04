@@ -86,5 +86,41 @@ class MyAppTests(unittest.TestCase):
         response = self.app.delete("/payments/143")
         self.assertNotEqual(response.status_code, 404)  # Not Found
 
+     # Additional Test Functionality 
+    def setUp(self):
+        self.app = app.test_client()
+        self.app.testing = True
+
+    # Additional test functionality 
+    def test_search_customers_with_keyword(self):
+        with app.app_context():
+            # Define the test data
+            search_criteria = {
+                "keyword": "John"
+            }
+
+            # Send a POST request to the API endpoint
+            response = self.app.post("/customers/search", json=search_criteria)
+            self.assertEqual(response.status_code, 200)
+
+            # Parse the response JSON
+            data = json.loads(response.data)
+
+            # Perform your assertions on the response data
+            self.assertTrue(isinstance(data, list))
+            self.assertGreaterEqual(len(data), 0)
+
+    def test_search_customers_without_keyword(self):
+        with app.app_context():
+            # Send a POST request without the 'keyword' field
+            response = self.app.post("/customers/search", json={})
+            self.assertEqual(response.status_code, 400)
+
+            # Parse the response JSON
+            data = json.loads(response.data)
+
+            # Perform your assertions on the error message
+            self.assertEqual(data['error'], "Missing 'keyword' field in the request.")
+
 if __name__ == "__main__":
     unittest.main()
