@@ -38,6 +38,26 @@ class MyAppTests(unittest.TestCase):
         self.assertEqual(response.status_code, 404)
         self.assertTrue("Manila" in response.data.decode()) # Not Found 
 
+    # Insert Into Test 
+    def test_payment(self):
+        data = {
+            "customerNumber": 103,
+            "checkNumber": "H5677890",
+            "paymentDate": "2004-10-20",
+            "amount": 2500.00
+        }
+        response = self.app.post("/payments", json=data) 
+        self.assertEqual(response.status_code, 201) # Found
 
+    def test_payment(self):
+        data = {
+            "customerNumber": 500,
+            "checkNumber": "H5789009",
+            "paymentDate": "2021-10-20",
+            "amount": 56789.00
+        }
+        response = self.app.post("/payments", json=data)
+        self.assertEqual(response.status_code, 404) # Not Found 
+ 
 if __name__ == "__main__":
     unittest.main()
