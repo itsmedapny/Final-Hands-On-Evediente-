@@ -43,6 +43,17 @@ def update_customer():
     cur.close()
     return make_response(jsonify(updated_data), 200)
 
+# Join Statement 
+@app.route("/customers/join", methods=["GET"])
+def join_customer():
+    cur = mysql.connection.cursor()
+    query = """SELECT c.customerNumber, b.customerNumber, c.customerName, b.customerName, c.country, b.country
+    FROM customers c, customers b WHERE c.country = b.country"""
+    cur.execute(query)
+    data = cur.fetchall()
+    cur.close()
+    return make_response(jsonify(data), 200)
+
 
 if __name__ == "__main__":
     app.run(debug=True)
