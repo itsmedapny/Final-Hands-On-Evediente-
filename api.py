@@ -89,7 +89,19 @@ def update_payment(checkNumber):
         jsonify({"Note": "The amount in payment updated successfully"}), 200
     )
 
-
+# Delete Statement Using DELETE method
+@app.route("/payments/<string:checkNumber>", methods=["DELETE"])
+def delete_payment(checkNumber):
+    cur = mysql.connection.cursor()
+    cur.execute( """DELETE FROM payments
+     where checkNumber = %s""", (checkNumber,)
+    )
+    mysql.connection.commit()
+    rows_affected = cur.rowcount
+    cur.close()
+    return make_response(
+        jsonify({"Note": "The checkNumber in payment deleted successfully"}), 200
+    )
 
 if __name__ == "__main__":
     app.run(debug=True)
