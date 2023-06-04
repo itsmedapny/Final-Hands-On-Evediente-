@@ -26,5 +26,18 @@ class MyAppTests(unittest.TestCase):
         self.assertEqual(response.status_code, 404)
         self.assertTrue("Evediente" in response.data.decode()) # Not Found
 
+    # Update Statement 
+
+    def update_customers(self):
+        response = self.app.get("/customers/update")
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue("Philippines" in response.data.decode()) # Found
+   
+    def update_customers(self):
+        response = self.app.get("/customers/update")
+        self.assertEqual(response.status_code, 404)
+        self.assertTrue("Manila" in response.data.decode()) # Not Found 
+
+
 if __name__ == "__main__":
     unittest.main()
