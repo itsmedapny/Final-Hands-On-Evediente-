@@ -103,5 +103,23 @@ def delete_payment(checkNumber):
         jsonify({"Note": "The checkNumber in payment deleted successfully"}), 200
     )
 
+# Addition search functionality 
+
+@app.route("/customers/search", methods=["POST"])
+def search_customers():
+    srch_cri = request.get_json()
+    keyword = srch_cri.get("keyword")
+
+    if not keyword:
+        return make_response(jsonify({"error": "Missing 'keyword' field in the request."}), 400)
+
+    cur = mysql.connection.cursor()
+    query = "SELECT * FROM customers WHERE customerName LIKE %s"
+    cur.execute(query, (f"%{keyword}%",))
+    data = cur.fetchall()
+    cur.close()
+
+    return make_response(jsonify(data), 200)
+
 if __name__ == "__main__":
     app.run(debug=True)
