@@ -11,6 +11,11 @@ app.config["MYSQL_CURSORCLASS"] = "DictCursor"
 
 mysql = MySQL(app)
 
+# Flask Test
+@app.route("/")
+def hello_world():
+    return "<p>Hello, World!</p>" 
+
 # Select Statement 
 @app.route("/customers", methods=["GET"])
 def get_customers():
@@ -21,10 +26,23 @@ def get_customers():
     cur.close()
     return make_response(jsonify(data), 200)
 
-# Flask Test
-@app.route("/")
-def hello_world():
-    return "<p>Hello, World!</p>"
+# Update Statement
+@app.route("/customers/update", methods=["GET"])
+def update_customer():
+    cur = mysql.connection.cursor()
+    query = "UPDATE customers SET city='Philippines' WHERE customerNumber = 112"
+    cur.execute(query)
+    mysql.connection.commit()
+
+    # Fetch the updated row 
+
+    select_query = "SELECT * FROM customers WHERE customerNumber = 103"
+    cur.execute(select_query)
+    updated_data = cur.fetchone()
+
+    cur.close()
+    return make_response(jsonify(updated_data), 200)
+
 
 if __name__ == "__main__":
     app.run(debug=True)
