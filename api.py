@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, make_response
+from flask import Flask, jsonify, make_response, request
 from flask_mysqldb import MySQL
 
 # access to database 
@@ -54,6 +54,22 @@ def join_customer():
     cur.close()
     return make_response(jsonify(data), 200)
 
+# Insert Into Statement
+@app.route("/payments/amount", methods=["POST"])
+def insert_payment():
+    info = request.get_json()
+    cur = mysql.connection.cursor()
+    amount = info["amount"]
+    cur.execute(
+        """INSERT INTO payments (customerNumber, checkNumber, paymentDate, amount) 
+        VALUES (112, "H556890", "2004-10-25", %s);""",
+        (amount,)
+    )
+    mysql.connection.commit()
+    cur.close()
+    return make_response(
+        jsonify({"message": "Payment added successfully"}), 201
+    )
 
 if __name__ == "__main__":
     app.run(debug=True)
