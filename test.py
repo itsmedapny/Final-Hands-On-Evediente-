@@ -58,6 +58,23 @@ class MyAppTests(unittest.TestCase):
         }
         response = self.app.post("/payments", json=data)
         self.assertEqual(response.status_code, 404) # Not Found 
+    
+    # Update statement test using put method
+    def test_updatepayment(self):
+        data = {
+            "checkNumber": "LF501133",
+            "amount": 250000
+        }
+        response = self.app.put("/payments/496", json=data)
+        self.assertEqual(response.status_code, 200) # Found
+
+    def test_updatepayment(self):
+        data = {
+            "checkNumber": "LGH1569",
+            "amount": 16789.00
+        }
+        response = self.app.put("/payments/496", json=data)
+        self.assertNotEqual(response.status_code, 404) # Not Found
  
 if __name__ == "__main__":
     unittest.main()
