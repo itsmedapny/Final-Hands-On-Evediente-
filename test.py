@@ -76,5 +76,15 @@ class MyAppTests(unittest.TestCase):
         response = self.app.put("/payments/496", json=data)
         self.assertNotEqual(response.status_code, 404) # Not Found
  
+    # Delete Statement test using delete method
+
+    def test_delete(self):
+        response = self.app.delete("/payments/H569067")
+        self.assertEqual(response.status_code, 200) # Found 
+
+    def test_deletenon(self):
+        response = self.app.delete("/payments/143")
+        self.assertNotEqual(response.status_code, 404)  # Not Found
+
 if __name__ == "__main__":
     unittest.main()
