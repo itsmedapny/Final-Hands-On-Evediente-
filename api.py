@@ -54,7 +54,7 @@ def join_customer():
     cur.close()
     return make_response(jsonify(data), 200)
 
-# Insert Into Statement
+# Insert Into Statement using POST method
 @app.route("/payments/amount", methods=["POST"])
 def insert_payment():
     info = request.get_json()
@@ -70,6 +70,26 @@ def insert_payment():
     return make_response(
         jsonify({"message": "Payment added successfully"}), 201
     )
+
+# Update statement using PUT method 
+@app.route("/payments/<string:checkNumber>", methods=["PUT"])
+def update_payment(checkNumber):
+    cur = mysql.connection.cursor()
+    info = request.get_json()
+    amount = info["amount"]
+    cur.execute(
+        """UPDATE payments 
+        SET amount = %s 
+        WHERE checkNumber = %s;""", (amount, checkNumber)
+    )
+    mysql.connection.commit()
+    rows_affected = cur.rowcount
+    cur.close()
+    return make_response(
+        jsonify({"Note": "The amount in payment updated successfully"}), 200
+    )
+
+
 
 if __name__ == "__main__":
     app.run(debug=True)
