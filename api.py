@@ -1,5 +1,7 @@
-from flask import Flask, jsonify, make_response, request
+from flask import Flask, jsonify, make_response, request, Response
 from flask_mysqldb import MySQL
+import xml.etree.ElementTree as ET
+import xml.dom.minidom
 
 # access to database 
 app = Flask(__name__)
@@ -16,6 +18,23 @@ mysql = MySQL(app)
 def hello_world():
     return "<p>Hello, World!</p>" 
 
+def xml_response(data, root_element="root"):
+    root = ET.Element(root_element)
+    
+    if isinstance(data, dict):
+        data = [data]  # Convert single data item to a list
+
+    for item in data:
+        element = ET.SubElement(root, "customer")
+        for key, value in item.items():
+            sub_element = ET.SubElement(element, key)
+            sub_element.text = str(value)
+    
+    xml_string = ET.tostring(root, encoding='utf-8', method='xml')
+    readable_xml = xml.dom.minidom.parseString(xml_string).toprettyxml(indent="  ")
+    
+    return readable_xml
+
 # Select Statement 
 @app.route("/customers", methods=["GET"])
 def get_customers():
@@ -25,6 +44,23 @@ def get_customers():
     data = cur.fetchall()
     cur.close()
     return make_response(jsonify(data), 200)
+
+# Select Modify 
+@app.route("/customers/modify", methods=["GET"])
+def modify_customers():
+    cur = mysql.connection.cursor()
+    query = "SELECT * FROM customers"
+    cur.execute(query)
+    data = cur.fetchall()
+    cur.close()
+    
+    format_param = request.args.get('format')
+
+    if format_param == 'xml':
+        response = xml_response(data, root_element="Customers")
+        return Response(response, content_type='application/xml')
+    else:
+        return make_response(jsonify(data), 200)
 
 # Update Statement
 @app.route("/customers/update", methods=["GET"])
