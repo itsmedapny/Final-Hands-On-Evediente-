@@ -1,7 +1,7 @@
 @echo off
 setlocal enabledelayedexpansion
 
-start "CRUD API" cmd /c "python flasktest.py"
+start "CRUD API" cmd /c "python api.py"
 timeout /t 2 >nul
 
 
